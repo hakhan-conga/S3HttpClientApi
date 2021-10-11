@@ -1,20 +1,20 @@
 # S3HttpClientApi
 
 ## Isssue : S3 Response time is higher.
-We created application which will retrieve S3 file parallelly from S3 bucket. While performance testing, we found below for single file fetch.
-* When we call API frequntly in loop (without delay), it will return result in 20-30ms.
-    * We obvserve that when it return response in 20-30ms HttpSocket is open.
-    * Request skip DNS lookup and socket handshaking steps.
+We created an application that will retrieve S3 data in parallel from the S3 bucket. While doing performance testing, we found that for a single file fetch.
+* When we call the same API in a loop (without delay) then the response time is around 20-30ms.
+    * We observed that when the response time is 20-30ms, HttpSocket is still open.
+    * Request skipped the DNS lookup and socket handshaking steps.
      
-* When we call API randomly (without loop) within 10 seconds, result will be either of below
+* When we call API randomly (without loop) within 10 seconds, results will be either of the following
     1. 30ms-80ms mostly.
     1. 100+ms sometimes
     
-* When we call API with interval of more then 10-20 seconds S3 will take 100ms to 200ms to send response back.
+* When we call API with an interval of more then 10-20 seconds S3 will take 100ms to 200ms to send response back.
 
-We also check with S3 logs and found that it send response in 20ms to 80ms but in actual scenario it take time. Please check image/logs for more information.
+We also checked with S3 logs and found that it sends response in 20ms to 80ms but in actual scenarios it takes more time. Please check image/logs for more information.
 
-## We try below solutions but not found any improvement
+## We tried the following solutions but could not see any improvements
 
     1. S3 Client with standard configuration.
     2. Implement DotNet HttpClient Factory and set it in S3 configuration.
@@ -32,13 +32,13 @@ We also check with S3 logs and found that it send response in 20ms to 80ms but i
     2. Result in 20ms - Reuse socket connection
     ![Alt Log](Log/HttpLogs_20ms.jpg)
 
-    3. Result in 108ms - With socket connection and HttpHandShake, S3 take time to respond.
+    3. Result in 108ms - With socket connection and HttpHandShake, S3 still takes time to retrieve data (inconsistent performance).
     ![Alt Log](Log/HttpLogs_108ms.jpg)
 
 ## Conclusion
-* From image 1,2 and 3
-    1. S3 SDK not reuse socket connection and close it. (53ms)
-    2. If we fetch data in loop without delay then only it will reuse socket connection. (20ms)    
+* From image 1,2 and 3, it is clear that
+    1. S3 SDK does not reuse socket connection and close it. (53ms)
+    2. If we fetch data in a loop without any delay it reuses socket connection. (20ms)    
     3. S3 take time to respond and hence fetch time is more then 100ms. 
 
 ## Configuration
