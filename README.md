@@ -15,10 +15,10 @@ We created an application that will retrieve S3 data in parallel from the S3 buc
     * DNS lookup and socket handshaking steps were skipped when these requests were observed .
      
 2 When we do the same test as #1 but with a delay of 3-10 seconds between each requests, the following results were seen
-    1. 30ms-80ms mostly.
-    1. 100+ms sometimes
+    1. 50ms-100ms mostly.
+    2. 100+ms sometimes
     
-3 When we call the API with an interval of more than >10 seconds, S3 will now take 100ms to 200ms to send response back.
+3 When we call the API with an interval of more than >10 seconds, S3 will now take 100ms to 150ms to send response back.
 
 We also monitored S3 logs and found that there is some difference between S3 logs and http logs in terms of processing time. our assumption is that S3 logs does not consider any network latency for results. Please check image/logs for more information.
 
